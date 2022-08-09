@@ -3,35 +3,25 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: MobSF
-
+name: mobsfscan sarif
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ "master" ]  
+    branches: [ master, main ]
 
 jobs:
-  mobile-security:
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+  mobsfscan:
     runs-on: ubuntu-latest
-
+    name: mobsfscan code scanning
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.8
-
-      - name: Run mobsfscan
-        uses: MobSF/mobsfscan@main
-        with:
-          args: . --sarif --output results.sarif || true
-
-      - name: Upload mobsfscan report
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: results.sarif
+    - name: Checkout the code
+      uses: actions/checkout@v2
+    - name: mobsfscan
+      uses: MobSF/mobsfscan@main
+      with:
+        args: '. --sarif --output results.sarif || true'
+    - name: Upload mobsfscan report
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: results.sarif
